@@ -9,7 +9,7 @@ WORKDIR /app
 RUN flutter config --enable-web
 
 # Copy dependency specifications first to leverage Docker layer caching
-COPY pubspec.yaml pubspec.lock ./
+COPY pubspec.yaml ./
 
 # Fetch dependencies
 RUN flutter pub get
