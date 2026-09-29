@@ -39,17 +39,26 @@ class _LoginScreenState extends State<LoginScreen> {
       _errorMessage = null;
     });
 
-    final auth = Provider.of<AuthProvider>(context, listen: false);
-    final success = await auth.login(username, password);
+    try {
+      final auth = Provider.of<AuthProvider>(context, listen: false);
+      final success = await auth.login(username, password);
 
-    if (success && mounted) {
-      // Preload data
-      Provider.of<AccountingProvider>(context, listen: false).loadInitialData();
-    } else if (mounted) {
-      setState(() {
-        _isLoading = false;
-        _errorMessage = 'اسم المستخدم أو كلمة المرور غير صحيحة، أو الحساب معطل.';
-      });
+      if (success && mounted) {
+        // Preload data
+        Provider.of<AccountingProvider>(context, listen: false).loadInitialData();
+      } else if (mounted) {
+        setState(() {
+          _isLoading = false;
+          _errorMessage = 'اسم المستخدم أو كلمة المرور غير صحيحة، أو الحساب معطل.';
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+          _errorMessage = 'حدث خطأ أثناء محاولة تسجيل الدخول: $e';
+        });
+      }
     }
   }
 
