@@ -4,6 +4,7 @@ import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+import 'package:sqflite_common_ffi_web/sqflite_ffi_web.dart';
 import 'schema.dart';
 import 'seed_data.dart';
 
@@ -18,9 +19,11 @@ class DatabaseHelper {
     return _instance!;
   }
 
-  /// Initialize SQLite FFI on desktop platforms (macOS, Windows, Linux)
+  /// Initialize SQLite FFI on desktop platforms or web
   static void initializeFfi() {
-    if (!kIsWeb && (Platform.isWindows || Platform.isLinux || Platform.isMacOS)) {
+    if (kIsWeb) {
+      databaseFactory = databaseFactoryFfiWeb;
+    } else if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
       sqfliteFfiInit();
       databaseFactory = databaseFactoryFfi;
     }
@@ -35,7 +38,10 @@ class DatabaseHelper {
   }
 
   Future<String> getDatabasePath() async {
-    if (!kIsWeb && (Platform.isWindows || Platform.isLinux || Platform.isMacOS)) {
+    if (kIsWeb) {
+      return DatabaseSchema.databaseName;
+    }
+    if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
       final docDir = await getApplicationSupportDirectory();
       if (!await docDir.exists()) {
         await docDir.create(recursive: true);
@@ -50,6 +56,21 @@ class DatabaseHelper {
   Future<Database> _initDatabase() async {
     initializeFfi();
     final path = await getDatabasePath();
+
+    if (kIsWeb) {
+      return await databaseFactoryFfiWeb.openDatabase(
+        path,
+        options: OpenDatabaseOptions(
+          version: DatabaseSchema.version,
+          onCreate: (db, version) async {
+            for (final query in DatabaseSchema.createTablesQueries) {
+              await db.execute(query);
+            }
+            await DatabaseSeedData.seed(db);
+          },
+        ),
+      );
+    }
 
     return await openDatabase(
       path,
@@ -71,6 +92,20 @@ class DatabaseHelper {
 
   /// In-memory database initialization for unit testing
   static Future<Database> createInMemoryDatabase() async {
+    if (kIsWeb) {
+      return await databaseFactoryFfiWeb.openDatabase(
+        inMemoryDatabasePath,
+        options: OpenDatabaseOptions(
+          version: DatabaseSchema.version,
+          onCreate: (db, version) async {
+            for (final query in DatabaseSchema.createTablesQueries) {
+              await db.execute(query);
+            }
+            await DatabaseSeedData.seed(db);
+          },
+        ),
+      );
+    }
     sqfliteFfiInit();
     final dbFactory = databaseFactoryFfi;
     final db = await dbFactory.openDatabase(
@@ -93,6 +128,9 @@ class DatabaseHelper {
 
   /// Backup current database to destination path
   Future<File> backupDatabase(String destinationPath) async {
+    if (kIsWeb) {
+      throw UnsupportedError('النسخ الاحتياطي لقواعد البيانات متاح على أنظمة سطح المكتب فقط.');
+    }
     final currentPath = await getDatabasePath();
     final sourceFile = File(currentPath);
     if (!await sourceFile.exists()) {
@@ -109,6 +147,9 @@ class DatabaseHelper {
 
   /// Restore database from backup path
   Future<bool> restoreDatabase(String backupPath) async {
+    if (kIsWeb) {
+      throw UnsupportedError('استعادة قواعد البيانات متاحة على أنظمة سطح المكتب فقط.');
+    }
     final backupFile = File(backupPath);
     if (!await backupFile.exists()) {
       throw Exception('ملف النسخة الاحتياطية غير موجود.');
@@ -136,35 +177,39 @@ class DatabaseHelper {
   /// Database statistics (size in bytes, formatted string, last modified)
   Future<Map<String, dynamic>> getDatabaseInfo() async {
     try {
+      if (kIsWeb) {
+        return {
+          'size': 1024 * 1024,
+          'sizeFormatted': '1.0 MB (IndexedDB)',
+          'lastModified': DateTime.now().toIso8601String().substring(0, 19).replaceAll('T', ' '),
+          'path': 'متصفح الويب (IndexedDB)',
+        };
+      }
       final path = await getDatabasePath();
       final file = File(path);
       if (await file.exists()) {
-        final length = await file.length();
         final stat = await file.stat();
-        final sizeFormatted = (length < 1024 * 1024)
-            ? '${(length / 1024).toStringAsFixed(1)} KB'
-            : '${(length / (1024 * 1024)).toStringAsFixed(2)} MB';
         return {
+          'size': stat.size,
+          'sizeFormatted': _formatFileSize(stat.size),
+          'lastModified': stat.modified.toIso8601String().substring(0, 19).replaceAll('T', ' '),
           'path': path,
-          'size': length,
-          'sizeFormatted': sizeFormatted,
-          'lastModified': stat.modified,
         };
       }
-    } catch (_) {}
+    } catch (e) {
+      debugPrint('Error getting db info: $e');
+    }
     return {
-      'path': '',
       'size': 0,
-      'sizeFormatted': '0 KB',
-      'lastModified': DateTime.now(),
+      'sizeFormatted': 'غير متوفر',
+      'lastModified': 'غير متوفر',
+      'path': 'غير معروف',
     };
   }
 
-  /// Closes database
-  Future<void> close() async {
-    if (_database != null && _database!.isOpen) {
-      await _database!.close();
-      _database = null;
-    }
+  static String _formatFileSize(int bytes) {
+    if (bytes < 1024) return '$bytes B';
+    if (bytes < 1024 * 1024) return '${(bytes / 1024).toStringAsFixed(1)} KB';
+    return '${(bytes / (1024 * 1024)).toStringAsFixed(2)} MB';
   }
 }
