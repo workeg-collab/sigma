@@ -100,6 +100,17 @@ flutter test
 
 ---
 
+## 🐳 النشر السحابي عبر Docker و Coolify
+
+المشروع جاهز تماماً للنشر الفوري على منصة **Coolify** أو أي خادم Docker:
+
+1. **الربط المباشر**: في لوحة تحكم Coolify، أضف Application جديد واختر **GitHub** ثم حدد المستودع `workeg-collab/sigma`.
+2. **نوع النشر**: سيتعرف Coolify تلقائياً على ملف الـ [`Dockerfile`](file:///Users/POM/Developer/WORKEG/sigma/Dockerfile).
+3. **المنفذ (Port)**: حدد المنفذ `80`.
+4. **التحديث التلقائي**: بمجرد تفعيل Webhook، أي عملية `git push` على فرع `main` ستقوم بإعادة بناء الحاوية ونشر التحديثات تلقائياً بدون توقف (Zero-Downtime Deployment).
+
+---
+
 ## 📚 التوثيق الإضافي (Documentation)
 
 * [معمارية النظام (Architecture)](docs/ARCHITECTURE.md)

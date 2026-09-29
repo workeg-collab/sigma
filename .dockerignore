@@ -1,0 +1,15 @@
+.git
+.github
+.idea
+.vscode
+.dart_tool
+build
+windows
+linux
+macos
+ios
+android
+test
+*.md
+docs
+.env*
