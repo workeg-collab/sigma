@@ -18,7 +18,9 @@ void main() {
       ),
     );
 
-    expect(find.text('سيجما للمحاسبة والمقاولات'), findsOneWidget);
+    expect(find.text('سيجما'), findsOneWidget);
+    expect(find.text('نظام مالي متكامل وفق معايير القيد المزدوج'), findsOneWidget);
+    expect(find.text('powered by pom-agency.online'), findsOneWidget);
     expect(find.text('تسجيل الدخول للنظام'), findsOneWidget);
     expect(find.text('مسؤول النظام'), findsOneWidget);
   });

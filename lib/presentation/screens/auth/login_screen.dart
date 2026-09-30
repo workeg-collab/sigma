@@ -78,8 +78,11 @@ class _LoginScreenState extends State<LoginScreen> {
       body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(24),
-          child: Container(
-            width: 440,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 440,
             padding: const EdgeInsets.all(32),
             decoration: BoxDecoration(
               color: isDark ? const Color(0xFF1E293B) : Colors.white,
@@ -111,10 +114,11 @@ class _LoginScreenState extends State<LoginScreen> {
                 const SizedBox(height: 16),
                 const Center(
                   child: Text(
-                    'سيجما للمحاسبة والمقاولات',
+                    'سيجما',
                     style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w800,
+                      fontSize: 26,
+                      fontWeight: FontWeight.w900,
+                      letterSpacing: 0.5,
                     ),
                   ),
                 ),
@@ -234,9 +238,21 @@ class _LoginScreenState extends State<LoginScreen> {
               ],
             ),
           ),
-        ),
+          const SizedBox(height: 20),
+          Text(
+            'powered by pom-agency.online',
+            style: TextStyle(
+              fontSize: 11,
+              fontWeight: FontWeight.w500,
+              color: isDark ? const Color(0xFF64748B) : const Color(0xFF94A3B8),
+              letterSpacing: 0.8,
+            ),
+          ),
+        ],
       ),
-    );
+    ),
+  ),
+);
   }
 
   Widget _demoChip(String label, String user, String pass, Color color) {
