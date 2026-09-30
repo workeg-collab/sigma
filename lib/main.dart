@@ -82,7 +82,7 @@ class SigmaApp extends StatelessWidget {
     final auth = Provider.of<AuthProvider>(context);
 
     return MaterialApp(
-      title: 'سيجما للمحاسبة والمقاولات',
+      title: 'سيجما',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,

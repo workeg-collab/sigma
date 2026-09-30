@@ -1,6 +1,6 @@
 class AppStrings {
-  static const String appName = 'سيجما للمحاسبة والمقاولات';
-  static const String appSubtitle = 'نظام محاسبي متكامل للمشروعات والمقاولات';
+  static const String appName = 'سيجما';
+  static const String appSubtitle = 'نظام مالي متكامل وفق معايير القيد المزدوج';
 
   // Navigation
   static const String dashboard = 'لوحة التحكم';

@@ -62,12 +62,6 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
-  void _quickFill(String user, String pass) {
-    _usernameController.text = user;
-    _passwordController.text = pass;
-    _handleLogin();
-  }
-
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -78,11 +72,8 @@ class _LoginScreenState extends State<LoginScreen> {
       body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(24),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                width: 440,
+          child: Container(
+            width: 440,
             padding: const EdgeInsets.all(32),
             decoration: BoxDecoration(
               color: isDark ? const Color(0xFF1E293B) : Colors.white,
@@ -208,62 +199,23 @@ class _LoginScreenState extends State<LoginScreen> {
                           style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700),
                         ),
                 ),
-                const SizedBox(height: 24),
-
-                // Demo Accounts Shortcut
-                const Divider(),
-                const SizedBox(height: 8),
+                const SizedBox(height: 28),
                 Center(
                   child: Text(
-                    'تسجيل دخول تجريبي سريع:',
+                    'powered by pom-agency.online',
                     style: TextStyle(
-                      fontSize: 11,
+                      fontSize: 12,
                       fontWeight: FontWeight.w600,
                       color: isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B),
+                      letterSpacing: 0.6,
                     ),
                   ),
-                ),
-                const SizedBox(height: 10),
-                Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
-                  alignment: WrapAlignment.center,
-                  children: [
-                    _demoChip('مسؤول النظام', 'admin', 'admin123', AppColors.primary),
-                    _demoChip('رئيس الحسابات', 'accountant', 'acc123', AppColors.secondary),
-                    _demoChip('مراجع مالي', 'reviewer', 'rev123', Colors.deepPurple),
-                    _demoChip('مدخل بيانات', 'data_entry', 'entry123', Colors.teal),
-                  ],
                 ),
               ],
             ),
           ),
-          const SizedBox(height: 20),
-          Text(
-            'powered by pom-agency.online',
-            style: TextStyle(
-              fontSize: 11,
-              fontWeight: FontWeight.w500,
-              color: isDark ? const Color(0xFF64748B) : const Color(0xFF94A3B8),
-              letterSpacing: 0.8,
-            ),
-          ),
-        ],
+        ),
       ),
-    ),
-  ),
-);
-  }
-
-  Widget _demoChip(String label, String user, String pass, Color color) {
-    return ActionChip(
-      avatar: CircleAvatar(
-        radius: 6,
-        backgroundColor: color,
-      ),
-      label: Text(label, style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600)),
-      onPressed: () => _quickFill(user, pass),
-      padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
     );
   }
 }

@@ -48,15 +48,16 @@ class AppSidebar extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'سيجما للمحاسبة',
+                        'سيجما',
                         style: TextStyle(
                           color: Colors.white,
-                          fontSize: 15,
-                          fontWeight: FontWeight.w700,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w800,
+                          letterSpacing: 0.5,
                         ),
                       ),
                       Text(
-                        'إدارة المشروعات والمقاولات',
+                        'نظام مالي متكامل',
                         style: TextStyle(
                           color: Color(0xFF94A3B8),
                           fontSize: 10,
